@@ -26,3 +26,10 @@ def test_web_link(webFix):
     webFix.find_element(By.LINK_TEXT, 'Learn more').click()
     title = webFix.title
     assert "Firefox" in title
+
+
+def test_web_links(webFix):
+    links = webFix.find_elements(By.TAG_NAME, "a")
+    for link in links[:3]:
+        href = link.get_attribute("href")
+        assert 'mozilla' in href or 'youtu' in href or 'spotify' in href
