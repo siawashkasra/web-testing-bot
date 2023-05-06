@@ -14,7 +14,7 @@ def webFix():
     driver = webdriver.Firefox()
     driver.get(url)
     try:
-        element = wait(driver, 10).until(EC.title_contains(title))
+        wait(driver, 10).until(EC.title_contains(title))
     except Exception as e:
         print(e)
     yield driver
@@ -33,3 +33,25 @@ def test_web_links(webFix):
     for link in links[:3]:
         href = link.get_attribute("href")
         assert 'mozilla' in href or 'youtu' in href or 'spotify' in href
+
+
+@pytest.mark.test3
+def test_account_form(webFix):
+    sample_email = "test@gmail.com"
+    webFix.find_element(By.LINK_TEXT, 'Learn more').click()
+    try:
+        wait(webFix, 3).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'mzp-c-form-title')))
+    except Exception as e:
+        print(e)
+    text_input = webFix.find_element(By.ID, 'fxa-email-field')
+    text_input.send_keys(sample_email)
+    webFix.find_element(By.ID, 'fxa-email-form-submit').click()
+
+    pre_fill_email = None
+    try:
+        pre_fill_email = wait(webFix, 3).until(
+            EC.presence_of_element_located((By.ID, 'prefillEmail')))
+    except Exception as e:
+        print(e)
+    assert sample_email in pre_fill_email.text
